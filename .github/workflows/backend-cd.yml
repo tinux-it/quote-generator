@@ -32,8 +32,9 @@ jobs:
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
 
-      - name: Run tests
-        run: vendor/bin/phpunit
+      #commented out as we dont have tests yet
+#      - name: Run tests
+#        run: vendor/bin/phpunit
 
   build:
     name: Build and Push Docker Image
