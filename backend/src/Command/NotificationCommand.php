@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Command;
 
 use App\Entity\Subscription;
@@ -37,6 +39,12 @@ final class NotificationCommand extends Command
         return Command::SUCCESS;
     }
 
+
+    protected function configure(): void
+    {
+        $this->setDescription('Send notification');
+    }
+
     private function handleUser(User $user): void
     {
         $subscriptions = $user->getSubscriptions();
@@ -52,11 +60,5 @@ final class NotificationCommand extends Command
                 $handler->sendNotification($subscription);
             }
         }
-    }
-
-
-    protected function configure(): void
-    {
-        $this->setDescription('Send notification');
     }
 }

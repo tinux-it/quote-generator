@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\DTO\SubscribeRequest;
@@ -33,7 +35,7 @@ final class ApiController extends AbstractController
         if (json_last_error() !== JSON_ERROR_NONE) {
             return new JsonResponse([
                 'error' => 'Invalid JSON format',
-                'details' => json_last_error_msg()
+                'details' => json_last_error_msg(),
             ], Response::HTTP_BAD_REQUEST);
         }
 
@@ -76,6 +78,17 @@ final class ApiController extends AbstractController
         ]);
     }
 
+    #[Route('/quote', methods: ['GET'])]
+    public function getSingleQuote(): JsonResponse
+    {
+        $quote = $this->quoteGenerator->generateQuote();
+
+        return new JsonResponse([
+            "quote" => $quote,
+            "status" => Response::HTTP_OK,
+        ]);
+    }
+
     private function validateAndReturnErrors(object $requestDTO): ?JsonResponse
     {
         $errors = $this->validator->validate($requestDTO);
@@ -86,22 +99,13 @@ final class ApiController extends AbstractController
             }
 
             return new JsonResponse(
-                ['errors' => $errorMessages],
+                [
+                    'errors' => $errorMessages,
+                ],
                 Response::HTTP_BAD_REQUEST
             );
         }
 
         return null;
-    }
-
-    #[Route('/quote', methods: ['GET'])]
-    public function getSingleQuote(): JsonResponse
-    {
-        $quote = $this->quoteGenerator->generateQuote();
-
-        return new JsonResponse([
-            "quote" => $quote,
-            "status" => Response::HTTP_OK,
-        ]);
     }
 }

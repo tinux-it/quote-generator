@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Generator;
 
 final class QuoteGenerator
@@ -54,7 +56,7 @@ final class QuoteGenerator
         "Failure is the condiment that gives success its flavor.",
         "A little progress each day adds up to big results.",
         "You miss 100% of the shots you don’t take.",
-        "Life is 10% what happens to us and 90% how we react to it."
+        "Life is 10% what happens to us and 90% how we react to it.",
     ];
 
     public function generateQuote(): string

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Handler\Notification;
 
 use App\Entity\Subscription;
@@ -24,7 +26,7 @@ final readonly class Email implements NotificationHandlerInterface
             ->subject('It is time for your daily quote!!')
             ->htmlTemplate('email/quote_email.html.twig')
             ->context([
-                'quote' => $quote
+                'quote' => $quote,
             ]);
 
         $this->mailer->send($email);

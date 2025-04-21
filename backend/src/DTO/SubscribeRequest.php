@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DTO;
 
 use Symfony\Component\Serializer\Annotation\SerializedName;
@@ -10,7 +12,8 @@ final class SubscribeRequest
     public const array SUBSCRIPTION_METHODS = ["email", "whatsapp", "browser"];
 
     #[Assert\Email(
-        message: 'The email "{{ value }}" is not a valid email.')]
+        message: 'The email "{{ value }}" is not a valid email.'
+    )]
     public string $email;
 
     /** @var array<string, mixed> $methods */
@@ -27,5 +30,4 @@ final class SubscribeRequest
 
         return $dto;
     }
-
 }
