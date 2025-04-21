@@ -1,27 +1,26 @@
 <?php
 
-namespace App\Handler;
+namespace App\Handler\Notification;
 
-use App\Entity\User;
+use App\Entity\Subscription;
 use App\Generator\QuoteGenerator;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Email;
-final class EmailNotificationHandler
+
+final readonly class EmailNotificationHandler implements NotificationHandlerInterface
 {
     public function __construct(
-        private readonly MailerInterface $mailer,
-        private readonly QuoteGenerator $quoteGenerator
+        private MailerInterface $mailer,
+        private QuoteGenerator  $quoteGenerator
     ) {
     }
 
-    public function sendNotification(User $user)
+    public function sendNotification(Subscription $subscription): void
     {
         $quote = $this->quoteGenerator->generateQuote();
-
         $email = new TemplatedEmail()
             ->from('daily-quotes@tomemming.nl')
-            ->to($user->getEmail())
+            ->to($subscription->getDetails())
             ->subject('It is time for your daily quote!!')
             ->htmlTemplate('email/quote_email.html.twig')
             ->context([
@@ -29,5 +28,10 @@ final class EmailNotificationHandler
             ]);
 
         $this->mailer->send($email);
+    }
+
+    public function getType()
+    {
+        return 'email';
     }
 }
