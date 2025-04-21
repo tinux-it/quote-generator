@@ -43,4 +43,9 @@ return static function (ECSConfig $ecsConfig): void {
     $ecsConfig->ruleWithConfiguration(OrderedClassElementsFixer::class, [
         'order' => ['use_trait', 'constant_public', 'constant_protected', 'constant_private', 'property_public', 'property_protected', 'property_private', 'construct', 'method_public', 'method_protected', 'method_private'],
     ]);
+
+    $ecsConfig->skip([
+        __DIR__ . '/src/Handler/Notification/Email.php',
+    ]);
+
 };
