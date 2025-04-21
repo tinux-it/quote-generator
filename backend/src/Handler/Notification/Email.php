@@ -9,11 +9,11 @@ use App\Generator\QuoteGenerator;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
 
-final readonly class Email implements NotificationHandlerInterface
+final class Email implements NotificationHandlerInterface
 {
     public function __construct(
-        private MailerInterface $mailer,
-        private QuoteGenerator  $quoteGenerator
+        private readonly MailerInterface $mailer,
+        private readonly QuoteGenerator $quoteGenerator
     ) {
     }
 

@@ -32,14 +32,14 @@ jobs:
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
 
+      - name: Ensure vendor/bin scripts are executable
+        run: chmod +x vendor/bin/*
+
       - name: Upload vendor directory
         uses: actions/upload-artifact@v4
         with:
           name: vendor
           path: backend/vendor/
-
-      - name: Ensure vendor/bin scripts are executable
-        run: chmod +x vendor/bin/*
 
   php-cs-fixer:
     needs: setup
@@ -57,9 +57,6 @@ jobs:
         with:
           name: vendor
           path: backend/vendor/
-
-      - name: Ensure vendor/bin scripts are executable
-        run: chmod +x vendor/bin/*
 
       - name: Check coding standards
         run: vendor/bin/ecs check --no-progress-bar
@@ -80,9 +77,6 @@ jobs:
         with:
           name: vendor
           path: backend/vendor/
-
-      - name: Ensure vendor/bin scripts are executable
-        run: chmod +x vendor/bin/*
 
       - name: Run PHPStan
         run: vendor/bin/phpstan analyse --no-progress
