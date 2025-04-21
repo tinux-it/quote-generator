@@ -28,7 +28,7 @@ frontend/.eslintcache
 
 # === BACKEND (Symfony) ===
 backend/var/
-backend/vendor/
+backend/vendor/**
 backend/.env
 backend/.env.local
 backend/.env.test
