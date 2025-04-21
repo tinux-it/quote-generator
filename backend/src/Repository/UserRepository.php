@@ -6,6 +6,9 @@ use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
+/**
+ * @extends ServiceEntityRepository<User>
+ */
 final class UserRepository extends ServiceEntityRepository
 {
     public function findOneByEmail(string $email): ?User

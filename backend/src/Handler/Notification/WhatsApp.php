@@ -18,7 +18,7 @@ final class WhatsApp implements NotificationHandlerInterface
         $quote = $this->quoteGenerator->generateQuote();
     }
 
-    public function getType()
+    public function getType(): string
     {
         return 'whatsapp';
     }

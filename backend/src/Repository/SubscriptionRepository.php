@@ -7,6 +7,10 @@ use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
+
+/**
+ * @extends ServiceEntityRepository<Subscription>
+ */
 final class SubscriptionRepository extends ServiceEntityRepository
 {
     public function findOneByUserAndType(User $user, string $type): ?Subscription

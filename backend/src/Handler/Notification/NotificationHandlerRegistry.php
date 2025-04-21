@@ -4,6 +4,7 @@ namespace App\Handler\Notification;
 
 final class NotificationHandlerRegistry
 {
+    /** @var array<string, NotificationHandlerInterface> */
     private array $handlers = [];
 
     /**

@@ -18,7 +18,7 @@ final readonly class Discord implements NotificationHandlerInterface
         $this->quoteGenerator->generateQuote();
     }
 
-    public function getType()
+    public function getType(): string
     {
         return 'discord';
     }

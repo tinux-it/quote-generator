@@ -8,5 +8,5 @@ interface NotificationHandlerInterface
 {
     public function sendNotification(Subscription $subscription): void;
 
-    public function getType();
+    public function getType(): string;
 }

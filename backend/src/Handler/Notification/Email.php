@@ -30,7 +30,7 @@ final readonly class Email implements NotificationHandlerInterface
         $this->mailer->send($email);
     }
 
-    public function getType()
+    public function getType(): string
     {
         return 'email';
     }

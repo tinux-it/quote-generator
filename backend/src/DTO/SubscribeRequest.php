@@ -13,10 +13,12 @@ final class SubscribeRequest
         message: 'The email "{{ value }}" is not a valid email.')]
     public string $email;
 
+    /** @var array<string, mixed> $methods */
     #[Assert\NotBlank]
     #[SerializedName("methods")]
     public array $methods = [];
 
+    /** @param array<string, mixed> $data */
     public static function fromArray(array $data): self
     {
         $dto = new self();
