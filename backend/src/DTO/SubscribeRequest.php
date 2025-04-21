@@ -6,6 +6,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 final class SubscribeRequest
 {
+    public const array SUBSCRIPTION_METHODS = ["email", "whatsapp", "browser"];
+
     #[Assert\Email(
         message: 'The email "{{ value }}" is not a valid email.')]
     public string $email;
@@ -26,7 +28,7 @@ final class SubscribeRequest
 
     #[Assert\NotBlank]
     #[Assert\All([
-        new Assert\Choice(choices: ["email", "whatsapp", "browser"])
+        new Assert\Choice(choices: self::SUBSCRIPTION_METHODS)
     ])]
     public array $methods;
 }

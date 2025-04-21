@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\DTO\SubscribeRequest;
 use App\DTO\UnSubscribeRequest;
-use App\Handler\SubscribeHandler;
 use App\Handler\SubscriptionHandler;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -54,6 +53,15 @@ final class ApiController extends AbstractController
         $message = $this->subscriptionHandler->unSubscribe($unSubscribeRequest);
         return new JsonResponse([
             "message" => $message,
+            "status" => Response::HTTP_OK,
+        ]);
+    }
+
+    #[Route('/subscription-methods', methods: ['GET'])]
+    public function getSubscriptionMethods(): JsonResponse
+    {
+        return new JsonResponse([
+            "subscriptionMethods" => SubscribeRequest::SUBSCRIPTION_METHODS,
             "status" => Response::HTTP_OK,
         ]);
     }
