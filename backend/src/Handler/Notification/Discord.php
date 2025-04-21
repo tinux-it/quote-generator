@@ -5,7 +5,7 @@ namespace App\Handler\Notification;
 use App\Entity\Subscription;
 use App\Generator\QuoteGenerator;
 
-final readonly class DiscordNotificationHandler implements NotificationHandlerInterface
+final readonly class Discord implements NotificationHandlerInterface
 {
     public function __construct(
         private QuoteGenerator $quoteGenerator

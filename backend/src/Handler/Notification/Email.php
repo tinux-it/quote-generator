@@ -7,7 +7,7 @@ use App\Generator\QuoteGenerator;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
 
-final readonly class EmailNotificationHandler implements NotificationHandlerInterface
+final readonly class Email implements NotificationHandlerInterface
 {
     public function __construct(
         private MailerInterface $mailer,

@@ -5,7 +5,7 @@ namespace App\Handler\Notification;
 use App\Entity\Subscription;
 use App\Generator\QuoteGenerator;
 
-final readonly class BrowserNotificationHandler implements NotificationHandlerInterface
+final readonly class Browser implements NotificationHandlerInterface
 {
     public function __construct(
         private QuoteGenerator $quoteGenerator

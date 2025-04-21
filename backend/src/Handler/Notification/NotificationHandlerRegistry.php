@@ -1,12 +1,21 @@
 <?php
 
-namespace App\Handler\Notification\Registry;
-
-use App\Handler\Notification\NotificationHandlerInterface;
+namespace App\Handler\Notification;
 
 final class NotificationHandlerRegistry
 {
     private array $handlers = [];
+
+    /**
+     * @param iterable<NotificationHandlerInterface> $handlers
+     */
+    public function __construct(iterable $handlers = [])
+    {
+        foreach ($handlers as $handler) {
+            $this->addHandler($handler);
+        }
+    }
+
 
     public function addHandler(NotificationHandlerInterface $handler): void
     {

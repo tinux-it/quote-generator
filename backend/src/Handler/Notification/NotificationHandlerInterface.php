@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Handler;
+namespace App\Handler\Notification;
 
 use App\Entity\Subscription;
 
