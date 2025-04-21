@@ -24,7 +24,7 @@ final class SubscribeRequest
             new Assert\NotBlank(message: 'If provided, the phone number cannot be blank')
         ]
     )]
-    public string $phoneNumber;
+    public ?string $phoneNumber;
 
     #[Assert\NotBlank]
     #[Assert\All([
