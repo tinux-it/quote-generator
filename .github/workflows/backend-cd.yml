@@ -1,4 +1,4 @@
-name: Backend CD - Build Image
+name: Backend CD - Build and Push Image
 
 # Trigger workflow on main/master pushes, feature/setup-ci-backend, or manually
 on:
@@ -7,34 +7,10 @@ on:
       - main
       - master
       - feature/setup-ci-backend
+
 jobs:
-  test:
-    name: Run Tests
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./backend
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.4'
-          coverage: none
-          tools: composer:v2
-
-      - name: Install dependencies
-        run: composer install --prefer-dist --no-progress
-
-      #commented out as we dont have tests yet
-#      - name: Run tests
-#        run: vendor/bin/phpunit
-
   build:
     name: Build and Push Docker Image
-    needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -43,9 +19,8 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      # Only login to registry for main/master branches (where we'll push)
+      # Login to registry for all branches where we want to push
       - name: Login to Docker Hub
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
@@ -57,15 +32,9 @@ jobs:
         run: echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
         id: extract_branch
 
-      # Set whether to push based on branch
-      - name: Set Push Flag
-        id: push_flag
-        run: |
-          if [[ "${{ github.ref }}" == "refs/heads/main" || "${{ github.ref }}" == "refs/heads/master" ]]; then
-            echo "SHOULD_PUSH=true" >> $GITHUB_ENV
-          else
-            echo "SHOULD_PUSH=false" >> $GITHUB_ENV
-          fi
+      # Sanitize branch name for Docker tag (replace / with -)
+      - name: Sanitize branch name for Docker tag
+        run: echo "DOCKER_SAFE_BRANCH=$(echo ${{ env.BRANCH_NAME }} | sed 's/\//-/g')" >> $GITHUB_ENV
 
       - name: Extract metadata for Docker
         id: meta
@@ -75,7 +44,7 @@ jobs:
           images: your-dockerhub-username/your-backend-image
           tags: |
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' }}
-            type=raw,value=${{ env.BRANCH_NAME }}
+            type=raw,value=${{ env.DOCKER_SAFE_BRANCH }}
             type=sha,format=short
             type=ref,event=branch
 
@@ -84,25 +53,27 @@ jobs:
         with:
           context: ./backend
           file: ./backend/Dockerfile
-          # Only push for main/master
-          push: ${{ env.SHOULD_PUSH }}
+          push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      # For feature branches, output that the build succeeded but wasn't pushed
-      - name: Output build status for feature branch
-        if: github.ref == 'refs/heads/feature/setup-ci-backend'
-        run: |
-          echo "✅ Docker image build successful!"
-          echo "Image was built with tags: ${{ steps.meta.outputs.tags }}"
-          echo "Image was NOT pushed to registry (only done for main/master)"
-          echo "This build confirms your Dockerfile is valid"
-
-      # For main/master, output push confirmation
-      - name: Output push confirmation
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+      # Output the image details for all branches
+      - name: Output push details
         run: |
           echo "✅ Docker image built and pushed successfully!"
           echo "Image pushed with tags: ${{ steps.meta.outputs.tags }}"
+          echo ""
+          echo "To pull this image, run:"
+          
+          # Extract the first tag for demo purposes
+          FIRST_TAG=$(echo "${{ steps.meta.outputs.tags }}" | head -n 1)
+          echo "docker pull ${FIRST_TAG}"
+          
+          if [[ "${{ github.ref }}" == "refs/heads/feature/setup-ci-backend" ]]; then
+            echo ""
+            echo "Feature branch tag: your-dockerhub-username/your-backend-image:feature-setup-ci-backend"
+            echo "You can pull this specific tag with:"
+            echo "docker pull your-dockerhub-username/your-backend-image:feature-setup-ci-backend"
+          fi
