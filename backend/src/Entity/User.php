@@ -14,7 +14,7 @@ use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 
 #[Entity]
-final class User
+class User
 {
     #[Id]
     #[GeneratedValue]

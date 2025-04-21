@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\ManyToOne;
 
 #[Entity]
-final class Subscription
+class Subscription
 {
     #[Id]
     #[GeneratedValue]
