@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Your Daily Quote</title>
+    <style>
+        body {
+            background: linear-gradient(to bottom right, #111827, #1f2937, #111827);
+            color: #ffffff;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: rgba(31, 41, 55, 0.8); /* gray-800 with opacity */
+            backdrop-filter: blur(8px);
+            border: 1px solid #374151; /* gray-700 */
+            border-radius: 1rem; /* rounded-2xl */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            padding: 40px;
+        }
+        .heading {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .quote {
+            font-size: 1.5rem;
+            font-style: italic;
+            color: #d1d5db; /* gray-300 */
+            margin-bottom: 30px;
+        }
+        .footer {
+            font-size: 1rem;
+            color: #9ca3af; /* gray-400 */
+            margin-top: 20px;
+        }
+        .quote::before,
+        .quote::after {
+            content: '"';
+            color: #60a5fa; /* blue-400 */
+            font-size: 2rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="heading">✨ Your Daily Inspiration ✨</div>
+    <p class="quote">{{ quote }}</p>
+    <div class="footer">
+        Keep going with whatever you're doing, you'll get there!!<br> <br>
+        Sent with ❤️ by Tom Emming
+    </div>
+</div>
+</body>
+</html>

@@ -4,16 +4,62 @@ namespace App\Handler;
 
 use App\DTO\SubscribeRequest;
 use App\DTO\UnSubscribeRequest;
+use App\Entity\Subscription;
+use App\Entity\User;
+use App\Factory\SubscribedUserFactory;
+use App\Repository\SubscriptionRepository;
+use DateTime;
+use Doctrine\ORM\EntityManagerInterface;
 
-final class SubscriptionHandler
+final readonly class SubscriptionHandler
 {
+    public function __construct(
+        private SubscribedUserFactory $subscribedUserFactory,
+        private EntityManagerInterface $entityManager,
+        private SubscriptionRepository $subscriptionRepository
+    ) {
+    }
+
+
     public function subscribe(SubscribeRequest $request): string
     {
-        return "Subscription succesfull!";
+        $user = $this->subscribedUserFactory->findOrCreateUser($request->email);
+        $this->updateSubscription($user, $request);
+
+        return "Created or update subscription successfully!";
     }
 
     public function unSubscribe(UnSubscribeRequest $request): string
     {
-        return "Unsubscription succesfull!";
+        return "Unsubscription successful!";
+    }
+
+    public function updateSubscription(User $user, SubscribeRequest $request): void
+    {
+        $user->setEmail($request->email);
+        $user->setUpdatedAt(new DateTime('now'));
+        $user = $this->handleSubscriptions($user, $request);
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+    }
+
+    private function handleSubscriptions(User $user, SubscribeRequest $request): User
+    {
+        foreach ($request->methods as $methodKey => $methodValue) {
+            $subscription = $this->subscriptionRepository->findOneByUserAndType($user, $methodKey);
+            if (!$subscription instanceof Subscription) {
+                $subscription = new Subscription();
+                $subscription->setUser($user);
+                $subscription->setType($methodKey);
+                $subscription->setDetails($methodValue);
+
+                $user->addSubscription($subscription);
+            } else {
+                $subscription->setDetails($methodValue);
+            }
+        }
+
+        return $user;
     }
 }
