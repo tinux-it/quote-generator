@@ -4,8 +4,10 @@ namespace App\Handler;
 
 use App\DTO\SubscribeRequest;
 use App\DTO\UnSubscribeRequest;
-use App\Entity\SubscribedUser;
+use App\Entity\Subscription;
+use App\Entity\User;
 use App\Factory\SubscribedUserFactory;
+use App\Repository\SubscriptionRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -13,7 +15,8 @@ final readonly class SubscriptionHandler
 {
     public function __construct(
         private SubscribedUserFactory $subscribedUserFactory,
-        private EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager,
+        private SubscriptionRepository $subscriptionRepository
     ) {
     }
 
@@ -31,14 +34,32 @@ final readonly class SubscriptionHandler
         return "Unsubscription successful!";
     }
 
-    public function updateSubscription(SubscribedUser $user, SubscribeRequest $request): void
+    public function updateSubscription(User $user, SubscribeRequest $request): void
     {
         $user->setEmail($request->email);
         $user->setUpdatedAt(new DateTime('now'));
-        $user->setSubscribedTo($request->methods);
-        $user->setPhoneNumber($request->phoneNumber);
+        $user = $this->handleSubscriptions($user, $request);
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
+    }
+
+    private function handleSubscriptions(User $user, SubscribeRequest $request): User
+    {
+        foreach ($request->methods as $methodKey => $methodValue) {
+            $subscription = $this->subscriptionRepository->findOneByUserAndType($user, $methodKey);
+            if (!$subscription instanceof Subscription) {
+                $subscription = new Subscription();
+                $subscription->setUser($user);
+                $subscription->setType($methodKey);
+                $subscription->setDetails($methodValue);
+
+                $user->addSubscription($subscription);
+            } else {
+                $subscription->setDetails($methodValue);
+            }
+        }
+
+        return $user;
     }
 }

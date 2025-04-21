@@ -2,26 +2,26 @@
 
 namespace App\Factory;
 
-use App\Entity\SubscribedUser;
-use App\Repository\SubscribedUserRepository;
+use App\Entity\User;
+use App\Repository\UserRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 
 final readonly class SubscribedUserFactory
 {
     public function __construct(
-    private SubscribedUserRepository $subscribedUserRepository,
+    private UserRepository         $subscribedUserRepository,
     private EntityManagerInterface $entityManager
     ) {
     }
 
-    public function findOrCreateUser(string $email): SubscribedUser
+    public function findOrCreateUser(string $email): User
     {
         $user = $this->subscribedUserRepository->findOneByEmail($email);
-        if (!$user instanceof SubscribedUser) {
+        if (!$user instanceof User) {
             $now = new DateTime('now');
 
-            $user = new SubscribedUser();
+            $user = new User();
             $user->setEmail($email);
             $user->setCreatedAt($now);
             $user->setUpdatedAt($now);

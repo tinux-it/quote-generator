@@ -3,13 +3,16 @@
 namespace App\Entity;
 
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 
 #[Entity]
-final class SubscribedUser
+final class User
 {
     #[Id]
     #[GeneratedValue]
@@ -18,17 +21,20 @@ final class SubscribedUser
 
     #[Column(type: 'string', length: 255, nullable: false)]
     private string $email;
-    #[Column(type: 'json', nullable: false)]
-    private array $subscribedTo = [];
 
-    #[Column(type: 'string', length: 10, nullable: true)]
-    private string $phoneNumber;
+    #[ORM\OneToMany(targetEntity: Subscription::class, mappedBy: 'user', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $subscriptions;
 
     #[Column(type: 'datetime')]
     private DateTime $createdAt;
 
     #[Column(type: 'datetime')]
     private DateTime $updatedAt;
+
+    public function __construct()
+    {
+        $this->subscriptions = new ArrayCollection();
+    }
 
     public function getId(): int
     {
@@ -44,24 +50,27 @@ final class SubscribedUser
         $this->email = $email;
     }
 
-    public function getSubscribedTo(): array
+    public function getSubscriptions(): Collection
     {
-        return $this->subscribedTo;
+        return $this->subscriptions;
     }
 
-    public function setSubscribedTo(array $subscribedTo): void
+    public function addSubscription(Subscription $subscription): Collection
     {
-        $this->subscribedTo = $subscribedTo;
+        if (!$this->subscriptions->contains($subscription)) {
+            $this->subscriptions->add($subscription);
+        }
+
+        return $this->subscriptions;
     }
 
-    public function getPhoneNumber(): string
+    public function removeSubscription(Subscription $subscription): Collection
     {
-        return $this->phoneNumber;
-    }
+        if ($this->subscriptions->contains($subscription)) {
+            $this->subscriptions->removeElement($subscription);
+        }
 
-    public function setPhoneNumber(string $phoneNumber): void
-    {
-        $this->phoneNumber = $phoneNumber;
+        return $this->subscriptions;
     }
 
     public function getCreatedAt(): DateTime

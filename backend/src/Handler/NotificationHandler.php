@@ -2,7 +2,7 @@
 
 namespace App\Handler;
 
-use App\Entity\SubscribedUser;
+use App\Entity\User;
 use App\Repository\SubscribedUserRepository;
 use Symfony\Component\Validator\Constraints\Email;
 
@@ -22,7 +22,7 @@ final class NotificationHandler
         }
     }
 
-    private function handleUser(SubscribedUser $user): void
+    private function handleUser(User $user): void
     {
         $subscriptions = $user->getSubscribedTo();
         foreach ($subscriptions as $subscription) {

@@ -2,7 +2,7 @@
 
 namespace App\Handler;
 
-use App\Entity\SubscribedUser;
+use App\Entity\User;
 use App\Generator\QuoteGenerator;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
@@ -15,7 +15,7 @@ final class EmailNotificationHandler
     ) {
     }
 
-    public function sendNotification(SubscribedUser $user)
+    public function sendNotification(User $user)
     {
         $quote = $this->quoteGenerator->generateQuote();
 
