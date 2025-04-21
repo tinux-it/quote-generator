@@ -1,8 +1,5 @@
-# .github/workflows/backend-ci.yml
 name: Backend CI
-
 on: [push, pull_request ]
-
 jobs:
   setup:
     name: Setup PHP Environment
@@ -32,9 +29,8 @@ jobs:
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
 
-      # Upload the vendor directory as an artifact
       - name: Upload vendor directory
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: vendor
           path: vendor/
@@ -47,9 +43,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Download the vendor directory
       - name: Download vendor directory
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: vendor
           path: vendor/
@@ -66,7 +61,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Download vendor directory
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: vendor
           path: vendor/
