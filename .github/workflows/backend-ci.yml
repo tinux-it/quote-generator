@@ -59,7 +59,7 @@ jobs:
         run: chmod +x vendor/bin/*
 
       - name: Check coding standards
-        run: vendor/bin/ecs check --no-progress-bar
+        run: vendor/bin/ecs check src --no-progress-bar  --config=ecs.php
 
   phpstan:
     needs: setup
@@ -80,6 +80,6 @@ jobs:
 
       - name: Ensure vendor/bin scripts are executable
         run: chmod +x vendor/bin/*
-        
+
       - name: Run PHPStan
-        run: vendor/bin/phpstan analyse --no-progress
+        run: vendor/bin/phpstan analyse src --no-progress --configuration=phpstan.neon
