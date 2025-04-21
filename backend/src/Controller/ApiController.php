@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\DTO\SubscribeRequest;
 use App\DTO\UnSubscribeRequest;
+use App\Generator\QuoteGenerator;
 use App\Handler\SubscriptionHandler;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -20,6 +21,7 @@ final class ApiController extends AbstractController
         private readonly ValidatorInterface $validator,
         private readonly SerializerInterface $serializer,
         private readonly SubscriptionHandler $subscriptionHandler,
+        private readonly QuoteGenerator $quoteGenerator,
     ) {
     }
 
@@ -84,4 +86,14 @@ final class ApiController extends AbstractController
         return null;
     }
 
+    #[Route('/quote', methods: ['GET'])]
+    public function getSingleQuote(): JsonResponse
+    {
+        $quote = $this->quoteGenerator->generateQuote();
+
+        return new JsonResponse([
+            "quote" => $quote,
+            "status" => Response::HTTP_OK,
+        ]);
+    }
 }
