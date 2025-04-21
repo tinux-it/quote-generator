@@ -4,6 +4,9 @@ jobs:
   setup:
     name: Setup PHP Environment
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -23,7 +26,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/backend/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Install dependencies
@@ -33,12 +36,15 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: vendor
-          path: vendor/
+          path: backend/vendor/
 
   php-cs-fixer:
     needs: setup
     name: PHP Coding Standards
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -47,7 +53,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: vendor
-          path: vendor/
+          path: backend/vendor/
 
       - name: Check coding standards
         run: vendor/bin/ecs check --no-progress-bar
@@ -56,6 +62,9 @@ jobs:
     needs: setup
     name: PHPStan Static Analysis
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -64,7 +73,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: vendor
-          path: vendor/
+          path: backend/vendor/
 
       - name: Run PHPStan
         run: vendor/bin/phpstan analyse --no-progress
