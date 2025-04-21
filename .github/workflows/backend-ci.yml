@@ -65,7 +65,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-        # Download the vendor directory
+      - name: Download vendor directory
         uses: actions/download-artifact@v3
         with:
           name: vendor
