@@ -7,10 +7,6 @@ on:
       - main
       - master
       - feature/setup-ci-backend
-    paths:
-      - 'backend/**'
-  workflow_dispatch:  # Allow manual triggering
-
 jobs:
   test:
     name: Run Tests
