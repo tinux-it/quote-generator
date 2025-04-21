@@ -1,6 +1,5 @@
 name: Backend CD - Build and Push Image
 
-# Trigger workflow on main/master pushes, feature/setup-ci-backend, or manually
 on:
   push:
     branches:
@@ -33,7 +32,7 @@ jobs:
         run: echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
         id: extract_branch
 
-      # Sanitize branch name for Docker tag (replace / with -)
+      # Sanitize branch name for Docker tag
       - name: Sanitize branch name for Docker tag
         run: echo "DOCKER_SAFE_BRANCH=$(echo ${{ env.BRANCH_NAME }} | sed 's/\//-/g')" >> $GITHUB_ENV
 
@@ -41,13 +40,12 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          # Replace with your actual image name
-          images: your-dockerhub-username/your-backend-image
+          # Use your actual Docker Hub username and image name
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/backend-app
           tags: |
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' }}
             type=raw,value=${{ env.DOCKER_SAFE_BRANCH }}
             type=sha,format=short
-            type=ref,event=branch
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
@@ -60,7 +58,6 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      # Output the image details for all branches
       - name: Output push details
         run: |
           echo "✅ Docker image built and pushed successfully!"
@@ -71,10 +68,3 @@ jobs:
           # Extract the first tag for demo purposes
           FIRST_TAG=$(echo "${{ steps.meta.outputs.tags }}" | head -n 1)
           echo "docker pull ${FIRST_TAG}"
-          
-          if [[ "${{ github.ref }}" == "refs/heads/feature/setup-ci-backend" ]]; then
-            echo ""
-            echo "Feature branch tag: your-dockerhub-username/your-backend-image:feature-setup-ci-backend"
-            echo "You can pull this specific tag with:"
-            echo "docker pull your-dockerhub-username/your-backend-image:feature-setup-ci-backend"
-          fi
