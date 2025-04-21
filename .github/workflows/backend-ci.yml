@@ -38,6 +38,9 @@ jobs:
           name: vendor
           path: backend/vendor/
 
+      - name: Ensure vendor/bin scripts are executable
+        run: chmod +x vendor/bin/*
+
   php-cs-fixer:
     needs: setup
     name: PHP Coding Standards
