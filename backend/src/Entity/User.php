@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use DateTime;
@@ -12,7 +14,7 @@ use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 
 #[Entity]
-final class User
+class User
 {
     #[Id]
     #[GeneratedValue]
@@ -22,6 +24,7 @@ final class User
     #[Column(type: 'string', length: 255, nullable: false)]
     private string $email;
 
+    /** @var Collection<int, Subscription> $subscriptions */
     #[ORM\OneToMany(targetEntity: Subscription::class, mappedBy: 'user', cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $subscriptions;
 
@@ -50,11 +53,18 @@ final class User
         $this->email = $email;
     }
 
+
+    /**
+     * @return Collection<int, Subscription>
+     */
     public function getSubscriptions(): Collection
     {
         return $this->subscriptions;
     }
 
+    /**
+     * @return Collection<int, Subscription>
+     */
     public function addSubscription(Subscription $subscription): Collection
     {
         if (!$this->subscriptions->contains($subscription)) {
@@ -64,6 +74,9 @@ final class User
         return $this->subscriptions;
     }
 
+    /**
+     * @return Collection<int, Subscription>
+     */
     public function removeSubscription(Subscription $subscription): Collection
     {
         if ($this->subscriptions->contains($subscription)) {

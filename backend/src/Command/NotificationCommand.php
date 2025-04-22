@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Command;
 
 use App\Entity\Subscription;
 use App\Entity\User;
+use App\Handler\Notification\NotificationHandlerInterface;
 use App\Handler\Notification\NotificationHandlerRegistry;
 use App\Repository\UserRepository;
 use Psr\Log\LoggerInterface;
@@ -28,11 +31,18 @@ final class NotificationCommand extends Command
         $this->logger->info('Sending notification');
 
         $users = $this->userRepository->findAll();
+        /** @var User $user */
         foreach ($users as $user) {
             $this->handleUser($user);
         }
 
         return Command::SUCCESS;
+    }
+
+
+    protected function configure(): void
+    {
+        $this->setDescription('Send notification');
     }
 
     private function handleUser(User $user): void
@@ -43,14 +53,12 @@ final class NotificationCommand extends Command
         foreach ($subscriptions as $subscription) {
             if ($this->handlerRegistry->hasHandler($subscription->getType())) {
                 $handler = $this->handlerRegistry->getHandler($subscription->getType());
+                if (!$handler instanceof NotificationHandlerInterface) {
+                    continue;
+                }
+
                 $handler->sendNotification($subscription);
             }
         }
-    }
-
-
-    protected function configure(): void
-    {
-        $this->setDescription('Send notification');
     }
 }

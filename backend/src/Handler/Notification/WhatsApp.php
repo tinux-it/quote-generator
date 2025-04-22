@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Handler\Notification;
 
 use App\Entity\Subscription;
@@ -18,7 +20,7 @@ final class WhatsApp implements NotificationHandlerInterface
         $quote = $this->quoteGenerator->generateQuote();
     }
 
-    public function getType()
+    public function getType(): string
     {
         return 'whatsapp';
     }

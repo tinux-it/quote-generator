@@ -1,0 +1,16 @@
+parameters:
+    level: 8
+    paths:
+        - src/
+        - tests/
+    excludePaths:
+        - vendor/*
+        - tests/*
+        - migrations/*
+
+    ignoreErrors:
+        - message: '#Property .+::\$id is never written, only read.#'
+          path: src/Entity/*
+
+includes:
+    - vendor/phpstan/phpstan-symfony/extension.neon

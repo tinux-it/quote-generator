@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Handler\Notification;
 
 final class NotificationHandlerRegistry
 {
+    /** @var array<string, NotificationHandlerInterface> */
     private array $handlers = [];
 
     /**

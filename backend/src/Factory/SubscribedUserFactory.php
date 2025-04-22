@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Factory;
 
 use App\Entity\User;
@@ -10,8 +12,8 @@ use Doctrine\ORM\EntityManagerInterface;
 final readonly class SubscribedUserFactory
 {
     public function __construct(
-    private UserRepository         $subscribedUserRepository,
-    private EntityManagerInterface $entityManager
+        private UserRepository         $subscribedUserRepository,
+        private EntityManagerInterface $entityManager
     ) {
     }
 
