@@ -17,22 +17,21 @@ final readonly class SubscribedUserFactory
     ) {
     }
 
-    public function findOrCreateUser(string $email): User
+    public function findUser(string $email): ?User
     {
-        $user = $this->subscribedUserRepository->findOneByEmail($email);
-        if (!$user instanceof User) {
-            $now = new DateTime('now');
+        return $this->subscribedUserRepository->findOneByEmail($email);
+    }
+    public function createUser(string $email): User
+    {
+        $now = new DateTime('now');
 
-            $user = new User();
-            $user->setEmail($email);
-            $user->setCreatedAt($now);
-            $user->setUpdatedAt($now);
+        $user = new User();
+        $user->setEmail($email);
+        $user->setCreatedAt($now);
+        $user->setUpdatedAt($now);
 
-            $this->entityManager->persist($user);
-            $this->entityManager->flush();
-
-            return $user;
-        }
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
 
         return $user;
     }
