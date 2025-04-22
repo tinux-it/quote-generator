@@ -25,8 +25,14 @@ final readonly class SubscriptionHandler
 
     public function subscribe(SubscribeRequest $request): string
     {
-        $user = $this->subscribedUserFactory->findOrCreateUser($request->email);
-        $this->updateSubscription($user, $request);
+        $user = $this->subscribedUserFactory->findUser($request->email);
+        if (!$user instanceof User) {
+            $user = $this->subscribedUserFactory->createUser($request->email);
+
+            $this->addSubscriptions($user, $request);
+        } else {
+            $this->updateSubscription($user, $request);
+        }
 
         return "Created or update subscription successfully!";
     }
@@ -36,8 +42,25 @@ final readonly class SubscriptionHandler
         return "Unsubscription successful!";
     }
 
+    public function addSubscriptions(User $user, SubscribeRequest $request): void
+    {
+        $user->setEmail($request->email);
+        $user->setUpdatedAt(new DateTime('now'));
+        $user = $this->handleSubscriptions($user, $request);
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+    }
+
     public function updateSubscription(User $user, SubscribeRequest $request): void
     {
+        $currSubscriptions = $user->getSubscriptions();
+        foreach ($currSubscriptions as $subscription) {
+            if (!array_key_exists($subscription->getType(), $request->methods)) {
+                $user->removeSubscription($subscription);
+            }
+        }
+
         $user->setEmail($request->email);
         $user->setUpdatedAt(new DateTime('now'));
         $user = $this->handleSubscriptions($user, $request);
