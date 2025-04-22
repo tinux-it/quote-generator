@@ -54,11 +54,11 @@ final readonly class SubscriptionHandler
                 $subscription = new Subscription();
                 $subscription->setUser($user);
                 $subscription->setType($methodKey);
-                $subscription->setDetails($methodValue);
+                $subscription->setDetails(is_string($methodValue) ? $methodValue : sprintf("%s", $methodValue));
 
                 $user->addSubscription($subscription);
             } else {
-                $subscription->setDetails($methodValue);
+                $subscription->setDetails(is_string($methodValue) ? $methodValue : sprintf("%s", $methodValue));
             }
         }
 
