@@ -29,22 +29,12 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Extract branch name for tagging
-      - name: Extract branch name
-        shell: bash
-        run: echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
-        id: extract_branch
-
-      # Sanitize branch name for Docker tag
-      - name: Sanitize branch name for Docker tag
-        run: echo "DOCKER_SAFE_BRANCH=$(echo ${{ env.BRANCH_NAME }} | sed 's/\//-/g')" >> $GITHUB_ENV
-
       - name: Extract metadata for Docker
         id: meta
         uses: docker/metadata-action@v4
         with:
           # Use GitHub Container Registry format
-          images: ghcr.io/${{ github.repository_owner }}/backend-app
+          images: ghcr.io/${{ github.repository_owner }}/quote-gen-backend
           tags: |
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' }}
             type=raw,value=${{ env.DOCKER_SAFE_BRANCH }}
