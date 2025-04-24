@@ -39,6 +39,13 @@ final readonly class SubscriptionHandler
 
     public function unSubscribe(UnSubscribeRequest $request): string
     {
+        $user = $this->subscribedUserFactory->findUser($request->email);
+        if ($user instanceof User) {
+            $this->entityManager->remove($user);
+
+            $this->entityManager->flush();
+        }
+
         return "Unsubscription successful!";
     }
 
