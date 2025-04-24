@@ -111,6 +111,7 @@ export default function Home() {
             setSuccessMessage("Successfully subscribed! You'll start receiving motivational quotes soon.");
         } catch (err) {
             setError('Failed to subscribe. Please try again.');
+            console.log(err);
         } finally {
             setSubmitting(false);
         }
@@ -143,31 +144,11 @@ export default function Home() {
             setSuccessMessage("Successfully unsubscribed. You'll no longer receive motivational quotes.");
         } catch (err) {
             setError('Failed to unsubscribe. Please try again.');
+            console.log(err);
         } finally {
             setSubmitting(false);
         }
     };
-
-    // Toggle between subscribe and unsubscribe modes
-    const toggleUnsubscribeMode = () => {
-        setIsUnsubscribeMode(!isUnsubscribeMode);
-        // Clear fields and errors when switching modes
-        setEmail('');
-        setPhoneNumber('');
-        setUnsubscribeEmail('');
-        setError(null);
-        setSuccessMessage(null);
-
-        // Reset selected methods when switching to subscribe mode
-        if (isUnsubscribeMode) {
-            const resetMethods: Record<string, boolean> = {};
-            availableMethods.forEach(method => {
-                resetMethods[method] = false;
-            });
-            setSelectedMethods(resetMethods);
-        }
-    };
-
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white flex flex-col items-center justify-center px-4">
@@ -222,7 +203,7 @@ export default function Home() {
                             <div className="space-y-6">
                                 <h2 className="text-xl font-semibold text-center">Unsubscribe from Quotes</h2>
                                 <p className="text-gray-400 text-center">
-                                    We're sorry to see you go. Enter your email to unsubscribe.
+                                    We are sorry to see you go. Enter your email to unsubscribe.
                                 </p>
 
                                 <div>
