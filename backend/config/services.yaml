@@ -21,3 +21,10 @@ services:
     App\Handler\Notification\NotificationHandlerRegistry:
         arguments:
             $handlers: !tagged_iterator app.notification_handler
+
+    App\Client\Twillio:
+        class: App\Client\Twillio
+        arguments:
+            $id: '%env(TWILLIO_ID)%'
+            $token: '%env(TWILLIO_TOKEN)%'
+            $fromNumber: '%env(TWILLIO_NUMBER)%'
