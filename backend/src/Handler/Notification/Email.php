@@ -23,7 +23,7 @@ final class Email implements NotificationHandlerInterface
         $email = new TemplatedEmail()
             ->from('daily-quotes@tomemming.nl')
             ->to($subscription->getDetails())
-            ->subject('It is time for your daily quote!!')
+            ->subject('It is time for your daily quote!')
             ->htmlTemplate('email/quote_email.html.twig')
             ->context([
                 'quote' => $quote,
