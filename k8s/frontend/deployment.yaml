@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quote-frontend
+  namespace: quote
+spec:
+  selector:
+    matchLabels:
+      app: quote-frontend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: quote-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: ghcr.io/tinux-it/quote-generator-frontend:latest
+          ports:
+            - containerPort: 3000
+          envFrom:
+            - secretRef:
+                name: quote-frontend-secrets

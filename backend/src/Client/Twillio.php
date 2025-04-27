@@ -21,12 +21,20 @@ final class Twillio
     public function sendMessage(string $recipient, string $message): void
     {
         $client = new Client($this->id, $this->token);
+        $messageWithFooter = sprintf('
+        Good morning👋, here is your free daily quote:
+            
+    *%s*
+            
+    Sent with ❤️ by Tom Emming
+    https://tomemming.nl
+        ', $message);
         try {
             $client->messages->create(
                 sprintf('whatsapp:%s', $recipient),
                 [
                     'from' => sprintf('whatsapp:%s', $this->fromNumber),
-                    'body' => $message,
+                    'body' => $messageWithFooter,
                 ]
             );
         } catch (TwilioException $e) {

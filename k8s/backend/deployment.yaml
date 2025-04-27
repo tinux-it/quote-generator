@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quote-backend
+  namespace: quote
+spec:
+  selector:
+    matchLabels:
+      app: quote-backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: quote-backend
+    spec:
+      initContainers:
+        - name: copy-app
+          image: ghcr.io/tinux-it/quote-generator-backend:latest
+          command: [ "sh", "-c", "cp -r /app/. /app-shared" ]
+          volumeMounts:
+            - name: app-volume
+              mountPath: /app-shared
+        - name: run-migrations
+          image: ghcr.io/tinux-it/quote-generator-backend:latest
+          command:
+            [
+              "sh",
+              "-c",
+              "php /app/bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration"
+            ]
+          envFrom:
+            - secretRef:
+                name: quote-backend-secrets
+          volumeMounts:
+            - name: app-volume
+              mountPath: /app
+            - name: php-socket
+              mountPath: /php-socket
+
+      containers:
+        - name: php-fpm
+          image: ghcr.io/tinux-it/quote-generator-backend:latest
+          volumeMounts:
+            - name: app-volume
+              mountPath: /app
+            - name: php-socket
+              mountPath: /php-socket
+          envFrom:
+            - secretRef:
+                name: quote-backend-secrets
+        - name: nginx
+          image: nginx:stable-alpine
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: app-volume
+              mountPath: /app
+            - name: nginx-config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+            - name: php-socket
+              mountPath: /php-socket
+          envFrom:
+            - secretRef:
+                name: quote-backend-secrets
+
+        - name: messenger-consumer
+          image: ghcr.io/tinux-it/quote-generator-backend:latest
+          command: [ "php", "/app/bin/console", "messenger:consume", "scheduler_send_daily_quote", "--no-interaction" ]
+          envFrom:
+            - secretRef:
+                name: quote-backend-secrets
+          volumeMounts:
+            - name: app-volume
+              mountPath: /app
+      volumes:
+        - name: app-volume
+          emptyDir: {}
+        - name: nginx-config
+          configMap:
+            name: nginx-config
+        - name: php-socket
+          emptyDir: {}
