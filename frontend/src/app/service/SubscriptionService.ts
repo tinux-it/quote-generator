@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.API_URL || 'http://api.quote.tomemming.nl/api';
+const API_BASE_URL = process.env.API_URL || 'https://api.quote.tomemming.nl/api';
 
 // Update the interface to match the new backend requirements
 export interface SubscriptionData {
