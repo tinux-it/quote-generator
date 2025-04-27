@@ -3,8 +3,14 @@ kind: Ingress
 metadata:
   name: quote-backend-ingress
   namespace: quote
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls.certresolver: le
 spec:
   ingressClassName: traefik
+  tls:
+    - hosts:
+        - api.quote.tomemming.nl
   rules:
     - host: api.quote.tomemming.nl
       http:
