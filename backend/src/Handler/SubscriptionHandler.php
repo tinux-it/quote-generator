@@ -8,17 +8,20 @@ use App\DTO\SubscribeRequest;
 use App\DTO\UnSubscribeRequest;
 use App\Entity\Subscription;
 use App\Entity\User;
+use App\Event\NewSubscriptionEvent;
 use App\Factory\SubscribedUserFactory;
 use App\Repository\SubscriptionRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 final readonly class SubscriptionHandler
 {
     public function __construct(
         private SubscribedUserFactory $subscribedUserFactory,
         private EntityManagerInterface $entityManager,
-        private SubscriptionRepository $subscriptionRepository
+        private SubscriptionRepository $subscriptionRepository,
+        private EventDispatcherInterface $eventDispatcher
     ) {
     }
 
@@ -28,8 +31,10 @@ final readonly class SubscriptionHandler
         $user = $this->subscribedUserFactory->findUser($request->email);
         if (!$user instanceof User) {
             $user = $this->subscribedUserFactory->createUser($request->email);
-
             $this->addSubscriptions($user, $request);
+
+            $event = new NewSubscriptionEvent($user);
+            $this->eventDispatcher->dispatch($event);
         } else {
             $this->updateSubscription($user, $request);
         }

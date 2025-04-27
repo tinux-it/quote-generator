@@ -15,6 +15,7 @@
         "nelmio/cors-bundle": "^2.5",
         "symfony/console": "7.2.*",
         "symfony/dependency-injection": "7.2.*",
+        "symfony/discord-notifier": "7.2.*",
         "symfony/dotenv": "7.2.*",
         "symfony/expression-language": "7.2.*",
         "symfony/flex": "^2",
