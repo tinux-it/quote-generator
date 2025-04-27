@@ -1,12 +1,15 @@
-// src/app/page.tsx
 "use client"
 
-import { useState, useEffect } from "react";
-import { motion } from 'framer-motion';
-import { fetchAvailableMethods, subscribeUser, unsubscribeUser } from './service/SubscriptionService';
-import { getMethodDisplayName, validateSubscriptionForm } from './utils/subscriptionUtils';
+import {useEffect, useRef, useState} from "react";
+import {motion} from 'framer-motion';
+import {fetchAvailableMethods, subscribeUser, unsubscribeUser} from './service/SubscriptionService';
+import {getMethodDisplayName, validateSubscriptionForm} from './utils/subscriptionUtils';
+import {countryCodes, getDefaultCountryCode} from './utils/countryCodes';
 
 export default function Home() {
+    const [countryCode, setCountryCode] = useState(getDefaultCountryCode());
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+    const dropdownRef = useRef<HTMLDivElement>(null);
     const [availableMethods, setAvailableMethods] = useState<string[]>([]);
     const [selectedMethods, setSelectedMethods] = useState<Record<string, boolean>>({});
     const [loading, setLoading] = useState<boolean>(true);
@@ -27,6 +30,11 @@ export default function Home() {
 
     // Initialize the selectedMethods state when availableMethods changes
     useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setDropdownOpen(false);
+            }
+        }
         if (availableMethods.length > 0) {
             const initialState: Record<string, boolean> = {};
             availableMethods.forEach(method => {
@@ -34,6 +42,9 @@ export default function Home() {
             });
             setSelectedMethods(initialState);
         }
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [availableMethods]);
 
     // Fetch available methods on component mount
@@ -88,7 +99,7 @@ export default function Home() {
             }
 
             if (selectedMethods.whatsapp) {
-                subscriptionData.methods.whatsapp = phoneNumber;
+                subscriptionData.methods.whatsapp = `${countryCode}${phoneNumber}`;
             }
 
             if (selectedMethods.browser) {
@@ -275,15 +286,49 @@ export default function Home() {
                                 {needsPhoneInput && (
                                     <div>
                                         <label className="block mb-1">Phone Number</label>
-                                        <input
-                                            type="tel"
-                                            placeholder="0611603656"
-                                            className="mt-1 w-full px-4 py-2 rounded bg-gray-700 text-white"
-                                            value={phoneNumber}
-                                            onChange={(e) => setPhoneNumber(e.target.value)}
-                                        />
+                                        <div className="flex mt-1">
+                                            <div className="relative inline-block" ref={dropdownRef}>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setDropdownOpen(!dropdownOpen)}
+                                                    className="flex items-center px-2 py-2 rounded-l bg-gray-700 text-white border-r border-gray-600"
+                                                >
+                                                    {countryCodes.find(c => c.code === countryCode)?.flag || ''} {countryCode} ▼
+                                                </button>
+
+                                                {dropdownOpen && (
+                                                    <div className="absolute z-10 mt-1 bg-gray-700 rounded shadow-lg max-h-60 overflow-y-auto">
+                                                        {countryCodes.map(country => (
+                                                            <div
+                                                                key={`${country.code}-${country.country}`} // Use compound key for Canada/US
+                                                                className="px-4 py-2 hover:bg-gray-600 cursor-pointer flex items-center"
+                                                                onClick={() => {
+                                                                    setCountryCode(country.code);
+                                                                    setDropdownOpen(false);
+                                                                }}
+                                                            >
+                                                                <span className="mr-2">{country.flag}</span>
+                                                                <span>{country.country}</span>
+                                                                <span className="ml-2">{country.code}</span>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            <input
+                                                type="tel"
+                                                placeholder="611603656"
+                                                className="w-full px-4 py-2 rounded-r bg-gray-700 text-white"
+                                                value={phoneNumber}
+                                                onChange={(e) => setPhoneNumber(e.target.value)}
+                                            />
+                                        </div>
+                                        <p className="text-xs text-gray-400 mt-1">Enter without leading zero</p>
                                     </div>
                                 )}
+
+
 
                                 {error && (
                                     <div className="text-red-400 text-center p-2 bg-red-900/30 rounded-md">
