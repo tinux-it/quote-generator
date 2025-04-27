@@ -6,14 +6,17 @@ namespace App\Handler\Notification;
 
 use App\Entity\Subscription;
 use App\Generator\QuoteGenerator;
+use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 
 final class Email implements NotificationHandlerInterface
 {
     public function __construct(
         private readonly MailerInterface $mailer,
-        private readonly QuoteGenerator $quoteGenerator
+        private readonly QuoteGenerator $quoteGenerator,
+        private readonly LoggerInterface $logger
     ) {
     }
 
@@ -28,8 +31,11 @@ final class Email implements NotificationHandlerInterface
             ->context([
                 'quote' => $quote,
             ]);
-
-        $this->mailer->send($email);
+        try {
+            $this->mailer->send($email);
+        } catch (TransportExceptionInterface $exception) {
+            $this->logger->error($exception->getMessage());
+        }
     }
 
     public function getType(): string

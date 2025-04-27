@@ -28,3 +28,6 @@ services:
             $id: '%env(TWILLIO_ID)%'
             $token: '%env(TWILLIO_TOKEN)%'
             $fromNumber: '%env(TWILLIO_NUMBER)%'
+
+    App\EventListener\NewSubscriptionEventListener:
+        tags: [kernel.event_listener]
