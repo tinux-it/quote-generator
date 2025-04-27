@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: quote-frontend-ingress
+  namespace: quote
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: quote.tomemming.nl
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: quote-frontend-service
+                port:
+                  number: 80
