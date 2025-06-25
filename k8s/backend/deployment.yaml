@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: quote-backend
-  namespace: quote
+  namespace: tomemming
 spec:
   selector:
     matchLabels:
